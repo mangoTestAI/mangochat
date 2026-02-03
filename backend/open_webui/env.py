@@ -258,10 +258,7 @@ if os.path.exists(f"{DATA_DIR}/ollama.db"):
 else:
     pass
 
-# DATABASE_URL = os.environ.get("DATABASE_URL", f"sqlite:///{DATA_DIR}/webui.db")
-# DATABASE_URL = "postgresql://postgres:Qiaojun@369@db.xblxxtsodilpxkmzghgn.supabase.co:5432/postgres"
-# DATABASE_URL = "postgresql://postgres.xblxxtsodilpxkmzghgn:Qiaojun%40369@aws-1-ap-south-1.pooler.supabase.com:5432/postgres"
-DATABASE_URL = "postgresql://postgres.xblxxtsodilpxkmzghgn:Qiaojun%40369@aws-1-ap-south-1.pooler.supabase.com:6543/postgres"
+DATABASE_URL = os.environ.get("DATABASE_URL", f"postgresql://postgres.xblxxtsodilpxkmzghgn:Qiaojun%40369@aws-1-ap-south-1.pooler.supabase.com:6543/postgres")
 
 DATABASE_TYPE = os.environ.get("DATABASE_TYPE")
 DATABASE_USER = os.environ.get("DATABASE_USER")
