@@ -16,6 +16,30 @@ export default defineConfig({
 			]
 		})
 	],
+	server: {
+		proxy: {
+			'/api': {
+				target: 'http://chat-test.mangotest.ai:8080',
+				changeOrigin: true
+			},
+			'/ollama': {
+				target: 'http://chat-test.mangotest.ai:8080',
+				changeOrigin: true
+			},
+			'/openai': {
+				target: 'http://chat-test.mangotest.ai:8080',
+				changeOrigin: true
+			},
+			'/images': {
+				target: 'http://chat-test.mangotest.ai:8080',
+				changeOrigin: true
+			},
+			'/uploads': {
+				target: 'http://chat-test.mangotest.ai:8080',
+				changeOrigin: true
+			}
+		}
+	},
 	define: {
 		APP_VERSION: JSON.stringify(process.env.npm_package_version),
 		APP_BUILD_HASH: JSON.stringify(process.env.APP_BUILD_HASH || 'dev-build')
