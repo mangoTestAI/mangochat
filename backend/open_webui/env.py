@@ -258,7 +258,7 @@ if os.path.exists(f"{DATA_DIR}/ollama.db"):
 else:
     pass
 
-DATABASE_URL = os.environ.get("DATABASE_URL", f"postgresql://postgres.xblxxtsodilpxkmzghgn:Qiaojun%40369@aws-1-ap-south-1.pooler.supabase.com:6543/postgres")
+DATABASE_URL = os.environ.get("DATABASE_URL", f"postgresql://postgres.tokyabyidlwzxyaaxows:Qiaojun%40369@aws-1-ap-southeast-2.pooler.supabase.com:6543/postgres")
 
 DATABASE_TYPE = os.environ.get("DATABASE_TYPE")
 DATABASE_USER = os.environ.get("DATABASE_USER")
