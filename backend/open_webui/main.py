@@ -514,7 +514,9 @@ from open_webui.env import (
     WEBUI_ADMIN_EMAIL,
     WEBUI_ADMIN_PASSWORD,
     WEBUI_ADMIN_NAME,
+    ENABLE_DB_MIGRATIONS,
 )
+from open_webui.migrate import run_migrations
 
 from open_webui.utils.models import (
     get_all_models,
@@ -609,6 +611,9 @@ https://github.com/open-webui/open-webui
 async def lifespan(app: FastAPI):
     app.state.instance_id = INSTANCE_ID
     start_logger()
+
+    if ENABLE_DB_MIGRATIONS:
+        run_migrations()
 
     if RESET_CONFIG_ON_START:
         reset_config()
