@@ -37,6 +37,11 @@ export default defineConfig({
 			'/uploads': {
 				target: 'http://chat-test.mangotest.ai:8080',
 				changeOrigin: true
+			},
+			'/ws': {
+				target: 'ws://chat-test.mangotest.ai:8080',
+				changeOrigin: true,
+				ws: true
 			}
 		}
 	},
