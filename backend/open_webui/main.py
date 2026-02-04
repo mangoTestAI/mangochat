@@ -436,7 +436,6 @@ from open_webui.config import (
     AUTOCOMPLETE_GENERATION_PROMPT_TEMPLATE,
     AUTOCOMPLETE_GENERATION_INPUT_MAX_LENGTH,
     AppConfig,
-    reset_config,
     CREDIT_NO_CHARGE_EMPTY_RESPONSE,
     CREDIT_NO_CREDIT_MSG,
     USAGE_CALCULATE_MODEL_PREFIX_TO_REMOVE,
@@ -502,7 +501,6 @@ from open_webui.env import (
     ENABLE_COMPRESSION_MIDDLEWARE,
     ENABLE_WEBSOCKET_SUPPORT,
     BYPASS_MODEL_ACCESS_CONTROL,
-    RESET_CONFIG_ON_START,
     ENABLE_VERSION_UPDATE_CHECK,
     ENABLE_OTEL,
     EXTERNAL_PWA_MANIFEST_URL,
@@ -513,10 +511,8 @@ from open_webui.env import (
     # Admin Account Runtime Creation
     WEBUI_ADMIN_EMAIL,
     WEBUI_ADMIN_PASSWORD,
-    WEBUI_ADMIN_NAME,
-    ENABLE_DB_MIGRATIONS,
+    WEBUI_ADMIN_NAME
 )
-from open_webui.migrate import run_migrations
 
 from open_webui.utils.models import (
     get_all_models,
@@ -611,12 +607,6 @@ https://github.com/open-webui/open-webui
 async def lifespan(app: FastAPI):
     app.state.instance_id = INSTANCE_ID
     start_logger()
-
-    if ENABLE_DB_MIGRATIONS:
-        run_migrations()
-
-    if RESET_CONFIG_ON_START:
-        reset_config()
 
     if LICENSE_KEY:
         get_license_data(app, LICENSE_KEY)
