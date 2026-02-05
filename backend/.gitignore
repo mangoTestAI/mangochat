@@ -11,3 +11,4 @@ Pipfile
 /open_webui/data/*
 .webui_secret_key
 .venv
+nohup.out
