@@ -529,28 +529,15 @@ async def get_all_models(request: Request, user: UserModel) -> dict[str, list]:
                         # Skip unwanted OpenAI models
                         continue
 
-                    # Custom filter: Keep only specific models and rename them
-                    target_models = {
-                        "gemini-3-pro-preview-thinking": "银河(Galaxy)-Pro",
-                        "gemini-3-flash-preview-thinking": "银河(Galaxy)-Flash",
-                        "claude-opus-4-5-20251101-thinking": "水晶(Crystal)-Pro"
-                    }
-
-                    if model_id in target_models:
-                        # Rename the model for frontend display
-                        model["name"] = target_models[model_id]
-                        
-                        if model_id not in models:
-                            models[model_id] = {
-                                **model,
-                                "name": model["name"],
-                                "owned_by": "openai",
-                                "openai": model,
-                                "connection_type": model.get("connection_type", "external"),
-                                "urlIdx": idx,
-                            }
-                    continue
-
+                    if model_id and model_id not in models:
+                        models[model_id] = {
+                            **model,
+                            "name": model.get("name", model_id),
+                            "owned_by": "openai",
+                            "openai": model,
+                            "connection_type": model.get("connection_type", "external"),
+                            "urlIdx": idx,
+                        }
         return models
 
     models = get_merged_models(map(extract_data, responses))

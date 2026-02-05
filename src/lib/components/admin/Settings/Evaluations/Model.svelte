@@ -27,11 +27,11 @@
 	<div class="flex justify-between items-center mb-1">
 		<div class="flex flex-col flex-1">
 			<div class="flex gap-2.5 items-center">
-				<img
+				<!-- <img
 					src={`${WEBUI_API_BASE_URL}/models/model/profile/image?id=${model.id}`}
 					alt={model.name}
 					class="size-8 rounded-full object-cover shrink-0"
-				/>
+				/> -->
 
 				<div class="w-full flex flex-col">
 					<div class="flex items-center gap-1">

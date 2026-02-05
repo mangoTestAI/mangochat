@@ -476,11 +476,11 @@
 												? ''
 												: 'opacity-50 dark:opacity-50'} bg-transparent rounded-2xl"
 										>
-											<img
+											<!-- <img
 												src={`${WEBUI_API_BASE_URL}/models/model/profile/image?id=${model.id}&lang=${$i18n.language}`}
 												alt="modelfile profile"
 												class=" rounded-2xl size-12 object-cover"
-											/>
+											/> -->
 										</div>
 									</div>
 								</div>

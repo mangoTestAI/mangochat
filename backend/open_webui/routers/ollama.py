@@ -332,7 +332,99 @@ def merge_ollama_models_lists(model_lists):
 async def get_all_models(request: Request, user: UserModel = None):
     log.info("get_all_models()")
     # Force disable Ollama models as requested
-    return {"models": []}
+    if request.app.state.config.ENABLE_OLLAMA_API:
+        request_tasks = []
+        for idx, url in enumerate(request.app.state.config.OLLAMA_BASE_URLS):
+            if (str(idx) not in request.app.state.config.OLLAMA_API_CONFIGS) and (
+                url not in request.app.state.config.OLLAMA_API_CONFIGS  # Legacy support
+            ):
+                request_tasks.append(send_get_request(f"{url}/api/tags", user=user))
+            else:
+                api_config = request.app.state.config.OLLAMA_API_CONFIGS.get(
+                    str(idx),
+                    request.app.state.config.OLLAMA_API_CONFIGS.get(
+                        url, {}
+                    ),  # Legacy support
+                )
+
+                enable = api_config.get("enable", True)
+                key = api_config.get("key", None)
+
+                if enable:
+                    request_tasks.append(
+                        send_get_request(f"{url}/api/tags", key, user=user)
+                    )
+                else:
+                    request_tasks.append(asyncio.ensure_future(asyncio.sleep(0, None)))
+
+        responses = await asyncio.gather(*request_tasks)
+
+        for idx, response in enumerate(responses):
+            if response:
+                url = request.app.state.config.OLLAMA_BASE_URLS[idx]
+                api_config = request.app.state.config.OLLAMA_API_CONFIGS.get(
+                    str(idx),
+                    request.app.state.config.OLLAMA_API_CONFIGS.get(
+                        url, {}
+                    ),  # Legacy support
+                )
+
+                connection_type = api_config.get("connection_type", "local")
+
+                prefix_id = api_config.get("prefix_id", None)
+                tags = api_config.get("tags", [])
+                model_ids = api_config.get("model_ids", [])
+
+                if len(model_ids) != 0 and "models" in response:
+                    response["models"] = list(
+                        filter(
+                            lambda model: model["model"] in model_ids,
+                            response["models"],
+                        )
+                    )
+
+                for model in response.get("models", []):
+                    if prefix_id:
+                        model["model"] = f"{prefix_id}.{model['model']}"
+
+                    if tags:
+                        model["tags"] = tags
+
+                    if connection_type:
+                        model["connection_type"] = connection_type
+
+        models = {
+            "models": merge_ollama_models_lists(
+                map(
+                    lambda response: response.get("models", []) if response else None,
+                    responses,
+                )
+            )
+        }
+
+        try:
+            loaded_models = await get_ollama_loaded_models(request, user=user)
+            expires_map = {
+                m["model"]: m["expires_at"]
+                for m in loaded_models["models"]
+                if "expires_at" in m
+            }
+
+            for m in models["models"]:
+                if m["model"] in expires_map:
+                    # Parse ISO8601 datetime with offset, get unix timestamp as int
+                    dt = datetime.fromisoformat(expires_map[m["model"]])
+                    m["expires_at"] = int(dt.timestamp())
+        except Exception as e:
+            log.debug(f"Failed to get loaded models: {e}")
+
+    else:
+        models = {"models": []}
+
+    request.app.state.OLLAMA_MODELS = {
+        model["model"]: model for model in models["models"]
+    }
+    return models
 
 
 async def get_filtered_models(models, user, db=None):
@@ -466,8 +558,74 @@ async def get_ollama_loaded_models(request: Request, user=Depends(get_admin_user
 @router.get("/api/version")
 @router.get("/api/version/{url_idx}")
 async def get_ollama_versions(request: Request, url_idx: Optional[int] = None):
-    # User requested to disable Ollama, so we return False immediately to avoid 500 errors
-    return {"version": False}
+    if request.app.state.config.ENABLE_OLLAMA_API:
+        if url_idx is None:
+            # returns lowest version
+            request_tasks = []
+
+            for idx, url in enumerate(request.app.state.config.OLLAMA_BASE_URLS):
+                api_config = request.app.state.config.OLLAMA_API_CONFIGS.get(
+                    str(idx),
+                    request.app.state.config.OLLAMA_API_CONFIGS.get(
+                        url, {}
+                    ),  # Legacy support
+                )
+
+                enable = api_config.get("enable", True)
+                key = api_config.get("key", None)
+
+                if enable:
+                    request_tasks.append(
+                        send_get_request(
+                            f"{url}/api/version",
+                            key,
+                        )
+                    )
+
+            responses = await asyncio.gather(*request_tasks)
+            responses = list(filter(lambda x: x is not None, responses))
+
+            if len(responses) > 0:
+                lowest_version = min(
+                    responses,
+                    key=lambda x: tuple(
+                        map(int, re.sub(r"^v|-.*", "", x["version"]).split("."))
+                    ),
+                )
+
+                return {"version": lowest_version["version"]}
+            else:
+                raise HTTPException(
+                    status_code=500,
+                    detail=ERROR_MESSAGES.OLLAMA_NOT_FOUND,
+                )
+        else:
+            url = request.app.state.config.OLLAMA_BASE_URLS[url_idx]
+
+            r = None
+            try:
+                r = requests.request(method="GET", url=f"{url}/api/version")
+                r.raise_for_status()
+
+                return r.json()
+            except Exception as e:
+                log.exception(e)
+
+                detail = None
+                if r is not None:
+                    try:
+                        res = r.json()
+                        if "error" in res:
+                            detail = f"Ollama: {res['error']}"
+                    except Exception:
+                        detail = f"Ollama: {e}"
+
+                raise HTTPException(
+                    status_code=r.status_code if r else 500,
+                    detail=detail if detail else "Open WebUI: Server Connection Error",
+                )
+    else:
+        return {"version": False}
 
 
 

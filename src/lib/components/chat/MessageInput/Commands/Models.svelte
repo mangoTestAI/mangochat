@@ -82,11 +82,11 @@
 				data-selected={modelIdx === selectedIdx}
 			>
 				<div class="flex text-black dark:text-gray-100 line-clamp-1">
-					<img
+					<!-- <img
 						src={`${WEBUI_API_BASE_URL}/models/model/profile/image?id=${model.id}&lang=${$i18n.language}`}
 						alt={model?.name ?? model.id}
 						class="rounded-full size-5 items-center mr-2"
-					/>
+					/> -->
 					<div class="truncate">
 						{model.name}
 					</div>
