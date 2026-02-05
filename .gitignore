@@ -312,3 +312,4 @@ cypress/videos
 cypress/screenshots
 .vscode/settings.json
 build.zip
+.user.ini
