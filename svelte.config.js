@@ -48,8 +48,10 @@ const config = {
 	},
 	onwarn: (warning, handler) => {
 		const { code } = warning;
+		// 忽略无效警告 @evanxu
 		if (code === 'css-unused-selector') return;
 		if (code === 'element_invalid_self_closing_tag') return;
+		if (code.startsWith('a11y-')) return;
 
 		handler(warning);
 	}
