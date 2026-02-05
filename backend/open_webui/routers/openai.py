@@ -477,6 +477,9 @@ async def get_filtered_models(models, user, db=None):
 )
 async def get_all_models(request: Request, user: UserModel) -> dict[str, list]:
     log.info("get_all_models()")
+    log.info(f"ENABLE_OPENAI_API: {request.app.state.config.ENABLE_OPENAI_API}")
+    log.info(f"OPENAI_API_BASE_URLS: {request.app.state.config.OPENAI_API_BASE_URLS}")
+    # log.info(f"OPENAI_API_KEYS: {['*' * len(k) for k in request.app.state.config.OPENAI_API_KEYS]}")
 
     if not request.app.state.config.ENABLE_OPENAI_API:
         return {"data": []}
@@ -500,6 +503,8 @@ async def get_all_models(request: Request, user: UserModel) -> dict[str, list]:
                 "embedding",
                 "tts",
                 "whisper",
+                "text-embedding-3-small",
+                "text-embedding-3-large",
             ]
         ):
             return False
@@ -513,6 +518,8 @@ async def get_all_models(request: Request, user: UserModel) -> dict[str, list]:
             if model_list is not None and "error" not in model_list:
                 for model in model_list:
                     model_id = model.get("id") or model.get("name")
+                    
+                    # log.info(f"Processing model: {model_id}")
 
                     if (
                         "api.openai.com"
@@ -522,15 +529,27 @@ async def get_all_models(request: Request, user: UserModel) -> dict[str, list]:
                         # Skip unwanted OpenAI models
                         continue
 
-                    if model_id and model_id not in models:
-                        models[model_id] = {
-                            **model,
-                            "name": model.get("name", model_id),
-                            "owned_by": "openai",
-                            "openai": model,
-                            "connection_type": model.get("connection_type", "external"),
-                            "urlIdx": idx,
-                        }
+                    # Custom filter: Keep only specific models and rename them
+                    target_models = {
+                        "gemini-3-pro-preview-thinking": "银河(Galaxy)-Pro",
+                        "gemini-3-flash-preview-thinking": "银河(Galaxy)-Flash",
+                        "claude-opus-4-5-20251101-thinking": "水晶(Crystal)-Pro"
+                    }
+
+                    if model_id in target_models:
+                        # Rename the model for frontend display
+                        model["name"] = target_models[model_id]
+                        
+                        if model_id not in models:
+                            models[model_id] = {
+                                **model,
+                                "name": model["name"],
+                                "owned_by": "openai",
+                                "openai": model,
+                                "connection_type": model.get("connection_type", "external"),
+                                "urlIdx": idx,
+                            }
+                    continue
 
         return models
 
