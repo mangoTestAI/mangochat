@@ -858,7 +858,7 @@
 				: 'invisible'}"
 		>
 			<div
-				class="sidebar px-[0.5625rem] pt-2 pb-1.5 flex justify-between space-x-1 text-gray-600 dark:text-gray-400 sticky top-0 z-10 -mb-3"
+				class="sidebar px-[0.5625rem] pt-2 pb-6 flex justify-between space-x-1 text-gray-600 dark:text-gray-400 sticky top-0 z-10 -mb-3"
 			>
 				<a
 					class="flex items-center rounded-xl size-8.5 h-full justify-center hover:bg-gray-100/50 dark:hover:bg-gray-850/50 transition no-drag-region"
@@ -869,7 +869,7 @@
 					<img
 						crossorigin="anonymous"
 						src="{WEBUI_BASE_URL}/static/favicon.png"
-						class="sidebar-new-chat-icon size-6 rounded-full"
+						class="sidebar-new-chat-icon size-8 rounded-full"
 						alt=""
 					/>
 				</a>
@@ -877,7 +877,7 @@
 				<a href="/" class="flex flex-1 px-1.5" on:click={newChatHandler}>
 					<div
 						id="sidebar-webui-name"
-						class=" self-center font-medium text-gray-850 dark:text-white font-primary"
+						class=" self-center font-medium text-[28px] text-gray-850 dark:text-white font-primary"
 					>
 						{$WEBUI_NAME}
 					</div>
@@ -918,11 +918,11 @@
 					}
 				}}
 			>
-				<div class="pb-1.5">
-					<div class="px-[0.4375rem] flex justify-center text-gray-800 dark:text-gray-200">
+				<div class="pb-7">
+					<div class="px-[0.4375rem] flex justify-center text-gray-800 dark:text-gray-200 mb-2">
 						<a
 							id="sidebar-new-chat-button"
-							class="group grow flex items-center space-x-3 rounded-2xl px-2.5 py-2 hover:bg-gray-100 dark:hover:bg-gray-900 transition outline-none"
+							class="group grow flex items-center justify-center space-x-2 rounded-full pl-[50px] pr-2.5 py-2 border border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900 transition outline-none"
 							href="/"
 							draggable="false"
 							on:click={newChatHandler}
@@ -932,7 +932,7 @@
 								<PencilSquare className=" size-4.5" strokeWidth="2" />
 							</div>
 
-							<div class="flex flex-1 self-center translate-y-[0.5px]">
+							<div class="flex self-center translate-y-[0.5px]">
 								<div class=" self-center text-sm font-primary">{$i18n.t('New Chat')}</div>
 							</div>
 
@@ -1022,6 +1022,7 @@
 						id="sidebar-models"
 						bind:open={showPinnedModels}
 						className="px-2 mt-0.5"
+						nameClassName="text-base font-bold"
 						name={$i18n.t('Models')}
 						chevron={false}
 						dragAndDrop={false}
@@ -1035,6 +1036,7 @@
 						id="sidebar-channels"
 						bind:open={showChannels}
 						className="px-2 mt-0.5"
+						nameClassName="text-base font-bold"
 						name={$i18n.t('Channels')}
 						chevron={false}
 						dragAndDrop={false}
@@ -1070,6 +1072,7 @@
 						id="sidebar-folders"
 						bind:open={showFolders}
 						className="px-2 mt-0.5"
+						nameClassName="text-base font-bold"
 						name={$i18n.t('Folders')}
 						chevron={false}
 						onAdd={() => {
@@ -1122,6 +1125,7 @@
 				<Folder
 					id="sidebar-chats"
 					className="px-2 mt-0.5"
+					nameClassName="text-base font-bold"
 					name={$i18n.t('Chats')}
 					chevron={false}
 					on:change={async (e) => {
