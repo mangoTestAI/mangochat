@@ -57,11 +57,18 @@
 					<Selector
 						id={`${selectedModelIdx}`}
 						placeholder={$i18n.t('Select a model')}
-						items={$models.map((model) => ({
-							value: model.id,
-							label: model.name,
-							model: model
-						}))}
+						items={$models
+							.filter((model) => {
+								if ($models.some((m) => !!m.info)) {
+									return !!model.info;
+								}
+								return true;
+							})
+							.map((model) => ({
+								value: model.id,
+								label: model.name,
+								model: model
+							}))}
 						{pinModelHandler}
 						bind:value={selectedModel}
 					/>

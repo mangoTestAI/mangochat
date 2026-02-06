@@ -910,7 +910,7 @@
 		}
 
 		const availableModels = $models
-			.filter((m) => !(m?.info?.meta?.hidden ?? false))
+			.filter((m) => !(m?.info?.meta?.hidden ?? false) && (m?.is_active ?? true))
 			.map((m) => m.id);
 
 		const defaultModels = $config?.default_models ? $config?.default_models.split(',') : [];

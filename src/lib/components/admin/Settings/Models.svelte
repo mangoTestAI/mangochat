@@ -60,6 +60,13 @@
 
 	$: if (models) {
 		filteredModels = models
+			.filter((m) => {
+				if (selectedTab === 'enabled') {
+					return m.is_active;
+				} else {
+					return !m.is_active;
+				}
+			})
 			.filter((m) => searchValue === '' || m.name.toLowerCase().includes(searchValue.toLowerCase()))
 			.sort((a, b) => {
 				// // Check if either model is inactive and push them to the bottom
@@ -72,6 +79,7 @@
 	}
 
 	let searchValue = '';
+	let selectedTab = 'enabled';
 
 	const downloadModels = async (models) => {
 		let blob = new Blob([JSON.stringify(models)], {
@@ -100,7 +108,7 @@
 					id: m.id,
 					name: m.name,
 
-					is_active: true
+					is_active: false
 				};
 			}
 		});
@@ -307,6 +315,25 @@
 						</button>
 					</Tooltip>
 				</div>
+			</div>
+
+			<div class="flex p-1 bg-gray-100 dark:bg-gray-900 rounded-xl w-fit my-1">
+				<button
+					class="px-4 py-1 rounded-lg text-sm font-medium transition {selectedTab === 'enabled'
+						? 'bg-white dark:bg-gray-800 shadow-sm'
+						: 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}"
+					on:click={() => (selectedTab = 'enabled')}
+				>
+					{$i18n.t('Enabled')}
+				</button>
+				<button
+					class="px-4 py-1 rounded-lg text-sm font-medium transition {selectedTab === 'disabled'
+						? 'bg-white dark:bg-gray-800 shadow-sm'
+						: 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}"
+					on:click={() => (selectedTab = 'disabled')}
+				>
+					{$i18n.t('Disabled')}
+				</button>
 			</div>
 
 			<div class=" flex flex-1 items-center w-full space-x-2">

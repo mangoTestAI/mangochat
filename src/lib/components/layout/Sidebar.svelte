@@ -875,12 +875,12 @@
 				</a>
 
 				<a href="/" class="flex flex-1 px-1.5" on:click={newChatHandler}>
-					<div
+					<img
 						id="sidebar-webui-name"
-						class=" self-center font-medium text-[28px] text-gray-850 dark:text-white font-primary"
-					>
-						{$WEBUI_NAME}
-					</div>
+						src="{WEBUI_BASE_URL}/static/web_name.webp"
+						class=" self-center h-8 w-auto pt-2"
+						alt="{$WEBUI_NAME}"
+					/>
 				</a>
 				<Tooltip
 					content={$showSidebar ? $i18n.t('Close Sidebar') : $i18n.t('Open Sidebar')}
