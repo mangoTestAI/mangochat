@@ -19,27 +19,27 @@ export default defineConfig({
 	server: {
 		proxy: {
 			'/api': {
-				target: process.env.WEBUI_BASE_URL || 'http://localhost:8080',
+				target: 'http://127.0.0.1:8080',
 				changeOrigin: true
 			},
 			'/ollama': {
-				target: process.env.WEBUI_BASE_URL || 'http://localhost:8080',
+				target: 'http://127.0.0.1:8080',
 				changeOrigin: true
 			},
 			'/openai': {
-				target: process.env.WEBUI_BASE_URL || 'http://localhost:8080',
+				target: 'http://127.0.0.1:8080',
 				changeOrigin: true
 			},
 			'/images': {
-				target: process.env.WEBUI_BASE_URL || 'http://localhost:8080',
+				target: 'http://127.0.0.1:8080',
 				changeOrigin: true
 			},
 			'/uploads': {
-				target: process.env.WEBUI_BASE_URL || 'http://localhost:8080',
+				target: 'http://127.0.0.1:8080',
 				changeOrigin: true
 			},
 			'/ws': {
-				target: process.env.WEBUI_BASE_URL || 'http://localhost:8080',
+				target: 'ws://127.0.0.1:8080',
 				changeOrigin: true,
 				ws: true,
 				rewrite: (path) => path.replace(/^\/ws/, '/ws')
