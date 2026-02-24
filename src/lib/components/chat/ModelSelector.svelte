@@ -59,6 +59,9 @@
 						placeholder={$i18n.t('Select a model')}
 						items={$models
 							.filter((model) => {
+								if (model.name === 'Arena Model') {
+									return false;
+								}
 								if ($models.some((m) => !!m.info)) {
 									return !!model.info;
 								}
