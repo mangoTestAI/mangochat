@@ -8,6 +8,8 @@ node 版本为 22
 ```bash
 pnpm install
 pnpm run dev
+# 启动前端并连接到远程测试环境
+pnpm run dev:test
 ```
 
 ### 后端地址

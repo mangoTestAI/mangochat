@@ -4,6 +4,7 @@
 	"private": true,
 	"scripts": {
 		"dev": "vite dev --host",
+		"dev:test": "WEBUI_BASE_URL=http://devbox.mangotest.ai:8080 vite dev --host",
 		"dev:5050": "vite dev --port 5050",
 		"build": "NODE_OPTIONS='--max-old-space-size=4096' vite build",
 		"build:watch": "NODE_OPTIONS='--max-old-space-size=4096' vite build --watch",

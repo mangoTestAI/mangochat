@@ -8,9 +8,7 @@ export const WEBUI_BASE_URL = browser
 	? dev
 		? process.env.WEBUI_BASE_URL !== undefined
 			? process.env.WEBUI_BASE_URL
-			: import.meta.env.VITE_WEBUI_BASE_URL !== undefined
-				? import.meta.env.VITE_WEBUI_BASE_URL
-				: `http://${WEBUI_HOSTNAME}`
+			: `http://${WEBUI_HOSTNAME}`
 		: ``
 	: ``;
 export const WEBUI_API_BASE_URL = `${WEBUI_BASE_URL}/api/v1`;
