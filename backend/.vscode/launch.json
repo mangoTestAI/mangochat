@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        
+        {
+            "name": "Debug Backend",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "open_webui.main:app",
+                "--port",
+                "8080",
+                "--host",
+                "0.0.0.0",
+                "--forwarded-allow-ips",
+                "*"
+            ],
+            "env": {
+                "DATABASE_URL": "postgresql://postgres.ochxljmbwvlnsnyqcvbn:Qiaojun%40369@aws-1-ap-south-1.pooler.supabase.com:6543/postgres",
+                "CORS_ALLOW_ORIGIN": "*"
+            },
+            "jinja": true,
+            "justMyCode": true
+        }
+    ]
+}

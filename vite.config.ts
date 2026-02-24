@@ -19,46 +19,37 @@ export default defineConfig({
 	server: {
 		proxy: {
 			'/api': {
-				target: 'http://chat-test.mangotest.ai:8080',
+				target: process.env.WEBUI_BASE_URL || 'http://localhost:8080',
 				changeOrigin: true
 			},
 			'/ollama': {
-				target: 'http://chat-test.mangotest.ai:8080',
+				target: process.env.WEBUI_BASE_URL || 'http://localhost:8080',
 				changeOrigin: true
 			},
 			'/openai': {
-				target: 'http://chat-test.mangotest.ai:8080',
+				target: process.env.WEBUI_BASE_URL || 'http://localhost:8080',
 				changeOrigin: true
 			},
 			'/images': {
-				target: 'http://chat-test.mangotest.ai:8080',
+				target: process.env.WEBUI_BASE_URL || 'http://localhost:8080',
 				changeOrigin: true
 			},
 			'/uploads': {
-				target: 'http://chat-test.mangotest.ai:8080',
+				target: process.env.WEBUI_BASE_URL || 'http://localhost:8080',
 				changeOrigin: true
 			},
 			'/ws': {
-				target: 'ws://chat-test.mangotest.ai:8080',
+				target: process.env.WEBUI_BASE_URL || 'http://localhost:8080',
 				changeOrigin: true,
 				ws: true,
-				configure: (proxy) => {
-					proxy.on('error', (err) => {
-						console.log('proxy error', err);
-					});
-					proxy.on('proxyReq', (proxyReq, req) => {
-						console.log('Sending Request to the Target:', req.method, req.url);
-					});
-					proxy.on('proxyRes', (proxyRes, req) => {
-						console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
-					});
-				}
+				rewrite: (path) => path.replace(/^\/ws/, '/ws')
 			}
 		}
 	},
 	define: {
 		APP_VERSION: JSON.stringify(process.env.npm_package_version),
-		APP_BUILD_HASH: JSON.stringify(process.env.APP_BUILD_HASH || 'dev-build')
+		APP_BUILD_HASH: JSON.stringify(process.env.APP_BUILD_HASH || 'dev-build'),
+		'process.env.WEBUI_BASE_URL': JSON.stringify(process.env.WEBUI_BASE_URL)
 	},
 	build: {
 		sourcemap: false,

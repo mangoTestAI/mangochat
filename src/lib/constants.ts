@@ -4,8 +4,20 @@ import { browser, dev } from '$app/environment';
 export const APP_NAME = '芒果AI';
 
 export const WEBUI_HOSTNAME = browser ? (dev ? `${location.hostname}:8080` : ``) : '';
-export const WEBUI_BASE_URL = browser ? (dev ? (import.meta.env.VITE_WEBUI_BASE_URL !== undefined ? import.meta.env.VITE_WEBUI_BASE_URL : ``) : ``) : ``;
+export const WEBUI_BASE_URL = browser
+	? dev
+		? process.env.WEBUI_BASE_URL !== undefined
+			? process.env.WEBUI_BASE_URL
+			: `http://${WEBUI_HOSTNAME}`
+		: ``
+	: ``;
 export const WEBUI_API_BASE_URL = `${WEBUI_BASE_URL}/api/v1`;
+
+if (dev) {
+	console.log('WEBUI_BASE_URL:', WEBUI_BASE_URL);
+	console.log('WEBUI_API_BASE_URL:', WEBUI_API_BASE_URL);
+}
+
 
 export const OLLAMA_API_BASE_URL = `${WEBUI_BASE_URL}/ollama`;
 export const OPENAI_API_BASE_URL = `${WEBUI_BASE_URL}/openai`;
