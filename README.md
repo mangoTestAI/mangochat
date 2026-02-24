@@ -12,10 +12,10 @@ pnpm run dev
 
 ### 后端地址
 后端地址为 `http://localhost:8000`
-可以在 `vite.config.ts` 中配置 `VITE_WEBUI_BASE_URL` 环境变量，来指定后端地址。
+可以在 `.env` 中配置 `VITE_WEBUI_BASE_URL` 环境变量，来指定后端地址。
 例如：
 ```bash
-VITE_WEBUI_BASE_URL=http://devbox.mangotest.ai:8080 
+VITE_WEBUI_BASE_URL=http://chat-test.mangotest.ai 
 ```
 
 
