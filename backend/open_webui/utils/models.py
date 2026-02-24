@@ -79,6 +79,8 @@ async def get_all_base_models(request: Request, user: UserModel = None):
 
 
 async def get_all_models(request, refresh: bool = False, user: UserModel = None):
+    # 1. 获取基础模型列表 (Base Models)
+    # 如果启用了缓存且不需要刷新，直接使用缓存的 BASE_MODELS
     if (
         request.app.state.MODELS
         and request.app.state.BASE_MODELS
@@ -86,17 +88,21 @@ async def get_all_models(request, refresh: bool = False, user: UserModel = None)
     ):
         base_models = request.app.state.BASE_MODELS
     else:
+        # 否则，从外部来源（如 Ollama, OpenAI, Functions）获取最新的基础模型列表
         base_models = await get_all_base_models(request, user=user)
         request.app.state.BASE_MODELS = base_models
 
     # deep copy the base models to avoid modifying the original list
+    # 深拷贝基础模型列表，避免修改原始缓存数据
     models = [model.copy() for model in base_models]
 
     # If there are no models, return an empty list
+    # 如果没有模型，直接返回空列表
     if len(models) == 0:
         return []
 
     # Add arena models
+    # 2. 添加竞技场模型 (Arena Models)
     if request.app.state.config.ENABLE_EVALUATION_ARENA_MODELS:
         arena_models = []
         if len(request.app.state.config.EVALUATION_ARENA_MODELS) > 0:
@@ -116,6 +122,7 @@ async def get_all_models(request, refresh: bool = False, user: UserModel = None)
             ]
         else:
             # Add default arena model
+            # 添加默认的竞技场模型
             arena_models = [
                 {
                     "id": DEFAULT_ARENA_MODEL["id"],
@@ -131,6 +138,7 @@ async def get_all_models(request, refresh: bool = False, user: UserModel = None)
             ]
         models = models + arena_models
 
+    # 3. 获取全局和启用的 Action/Filter ID 列表
     global_action_ids = [
         function.id for function in Functions.get_global_action_functions()
     ]
@@ -147,10 +155,12 @@ async def get_all_models(request, refresh: bool = False, user: UserModel = None)
         for function in Functions.get_functions_by_type("filter", active_only=True)
     ]
 
+    # 4. 应用自定义模型配置 (Custom Models)
     custom_models = Models.get_all_models()
     for custom_model in custom_models:
         if custom_model.base_model_id is None:
             # Applied directly to a base model
+            # 4a. 直接覆盖基础模型配置
             for model in models:
                 if custom_model.id == model["id"] or (
                     model.get("owned_by") == "ollama"
@@ -164,6 +174,7 @@ async def get_all_models(request, refresh: bool = False, user: UserModel = None)
                         model["info"] = custom_model.model_dump()
 
                         # Set action_ids and filter_ids
+                        # 设置模型绑定的 action_ids 和 filter_ids
                         action_ids = []
                         filter_ids = []
 
@@ -178,6 +189,7 @@ async def get_all_models(request, refresh: bool = False, user: UserModel = None)
 
                             if "params" in model["info"]:
                                 # Remove params to avoid exposing sensitive info
+                                # 移除敏感参数
                                 del model["info"]["params"]
 
                         model["action_ids"] = action_ids
@@ -189,6 +201,7 @@ async def get_all_models(request, refresh: bool = False, user: UserModel = None)
             custom_model.id not in [model["id"] for model in models]
         ):
             # Custom model based on a base model
+            # 4b. 基于基础模型创建新的自定义模型 (Preset)
             owned_by = "openai"
             connection_type = None
 
@@ -242,6 +255,7 @@ async def get_all_models(request, refresh: bool = False, user: UserModel = None)
             models.append(model)
 
     # Process action_ids to get the actions
+    # 5. 处理 Action 和 Filter 的详细信息
     def get_action_items_from_module(function, module):
         actions = []
         if hasattr(module, "actions"):
@@ -291,6 +305,8 @@ async def get_all_models(request, refresh: bool = False, user: UserModel = None)
         return function_module
 
     for model in models:
+        # 6. 处理每个模型的 Action 和 Filter 列表
+        # 合并模型特定的 ID 和全局 ID，并过滤出启用的 ID
         action_ids = [
             action_id
             for action_id in list(set(model.pop("action_ids", []) + global_action_ids))
@@ -328,6 +344,8 @@ async def get_all_models(request, refresh: bool = False, user: UserModel = None)
 
     log.debug(f"get_all_models() returned {len(models)} models")
 
+    # 7. 更新全局模型状态 (MODELS)
+    # 将处理后的模型列表转换为字典，并更新到全局状态 request.app.state.MODELS
     models_dict = {model["id"]: model for model in models}
     if isinstance(request.app.state.MODELS, RedisDict):
         request.app.state.MODELS.set(models_dict)
