@@ -15,6 +15,12 @@ export const WEBUI_BASE_URL = browser
 	: ``;
 export const WEBUI_API_BASE_URL = `${WEBUI_BASE_URL}/api/v1`;
 
+if (dev) {
+	console.log('WEBUI_BASE_URL:', WEBUI_BASE_URL);
+	console.log('WEBUI_API_BASE_URL:', WEBUI_API_BASE_URL);
+}
+
+
 export const OLLAMA_API_BASE_URL = `${WEBUI_BASE_URL}/ollama`;
 export const OPENAI_API_BASE_URL = `${WEBUI_BASE_URL}/openai`;
 export const AUDIO_API_BASE_URL = `${WEBUI_BASE_URL}/api/v1/audio`;
