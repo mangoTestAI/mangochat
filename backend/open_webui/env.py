@@ -34,7 +34,31 @@ BASE_DIR = BACKEND_DIR.parent
 try:
     from dotenv import find_dotenv, load_dotenv
 
-    load_dotenv(find_dotenv(str(BASE_DIR / ".env")))
+    # Check SG_ENV environment variable to determine which .env file to load
+    SG_ENV = os.environ.get("SG_ENV", "dev")
+    
+    if SG_ENV == "prod":
+        env_filename = ".env.prod"
+    else:
+        env_filename = ".env"
+    
+    # Priority 1: Check in BACKEND_DIR (backend/)
+    env_path = BACKEND_DIR / env_filename
+    
+    # Priority 2: Check in BASE_DIR (project root) if not found in backend
+    if not env_path.exists():
+        env_path = BASE_DIR / env_filename
+
+    # If specifically looking for .env (dev), use find_dotenv behavior as fallback if file doesn't exist at expected locations
+    if not env_path.exists() and env_filename == ".env":
+        env_path = Path(find_dotenv())
+
+    if env_path and env_path.exists():
+        print(f"Loading environment from {env_path}")
+        load_dotenv(str(env_path))
+    else:
+        print(f"Environment file {env_filename} not found.")
+
 except ImportError:
     print("dotenv not installed, skipping...")
 
@@ -372,10 +396,10 @@ RAG_SYSTEM_CONTEXT = os.environ.get("RAG_SYSTEM_CONTEXT", "False").lower() == "t
 REDIS_URL = os.environ.get("REDIS_URL", "")
 REDIS_CLUSTER = os.environ.get("REDIS_CLUSTER", "False").lower() == "true"
 
-REDIS_KEY_PREFIX = os.environ.get("REDIS_KEY_PREFIX", "open-webui")
+REDIS_KEY_PREFIX = os.environ.get("REDIS_KEY_PREFIX", "mangochat")
 
 REDIS_SENTINEL_HOSTS = os.environ.get("REDIS_SENTINEL_HOSTS", "")
-REDIS_SENTINEL_PORT = os.environ.get("REDIS_SENTINEL_PORT", "26379")
+REDIS_SENTINEL_PORT = os.environ.get("REDIS_SENTINEL_PORT", "")
 
 # Maximum number of retries for Redis operations when using Sentinel fail-over
 REDIS_SENTINEL_MAX_RETRY_COUNT = os.environ.get("REDIS_SENTINEL_MAX_RETRY_COUNT", "2")

@@ -54,3 +54,13 @@ cd ~/code/mangochat/backend
 # 启动后端服务
 sh dev.sh
 ```
+
+### 切换环境
+默认环境为 dev，切换到 prod 环境需要设置环境变量 `SG_ENV=prod`
+```bash
+export SG_ENV=prod
+```
+
+## 其他文档
+### 项目文档
+[项目文档](https://qiaojun-hk.jp.larksuite.com/wiki/OfKkwpwcfiNJibkiEsIjMzOmpkd?from=from_copylink)
